@@ -55,6 +55,19 @@ def test_update_user(client):
     }
 
 
+def test_update_user_error(client):
+    data_update = {
+        'username': 'bob',
+        'email': 'bob@example.com',
+        'password': 'mynewpassword',
+    }
+
+    response = client.put('/users/2', json=data_update)
+
+    assert response.status_code == 404
+    assert response.json()['detail'] == 'User not found'
+
+
 def test_delete_user(client):
     response = client.delete('/users/1')
 
