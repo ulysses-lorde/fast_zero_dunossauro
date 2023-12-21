@@ -11,6 +11,22 @@ from fast_zero.security import get_password_hash
 
 
 @pytest.fixture
+def session():
+    engine = create_engine(
+        'sqlite:///:memory:',
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
+    Session = sessionmaker(bind=engine)
+
+    Base.metadata.create_all(engine)
+
+    yield Session()
+
+    Base.metadata.drop_all(engine)
+
+
+@pytest.fixture
 def client(session):
     def get_session_override():
         return session
@@ -20,22 +36,6 @@ def client(session):
         yield client
 
     app.dependency_overrides.clear()
-
-
-@pytest.fixture
-def session():
-    engine = create_engine(
-        'sqlite:///:memory:',
-        connect_args={'check_same_thread': False},
-        poolclass=StaticPool,
-    )
-    Base.metadata.create_all(engine)
-
-    Session = sessionmaker(bind=engine)
-
-    yield Session()
-
-    Base.metadata.drop_all(engine)
 
 
 @pytest.fixture
@@ -57,7 +57,7 @@ def user(session):
 @pytest.fixture
 def token(client, user):
     response = client.post(
-        '/token',
+        '/auth/token',
         data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']
