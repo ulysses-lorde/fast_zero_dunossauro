@@ -10,6 +10,8 @@ from fast_zero.database import get_session
 from fast_zero.models import Base, User
 from fast_zero.security import get_password_hash
 
+# from tests.factories import UserFactory
+
 
 @pytest.fixture
 def session():
@@ -19,11 +21,8 @@ def session():
         poolclass=StaticPool,
     )
     Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
     Base.metadata.create_all(engine)
-
     yield Session()
-
     Base.metadata.drop_all(engine)
 
 
@@ -66,7 +65,7 @@ def user(session):
 @pytest.fixture
 def other_user(session):
     password = 'testtest'
-    user = UserFactory(password=(get_password_hash(password)))
+    user = UserFactory(id=2, password=(get_password_hash(password)))
 
     session.add(user)
     session.commit()
