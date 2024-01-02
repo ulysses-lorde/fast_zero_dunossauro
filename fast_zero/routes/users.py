@@ -16,14 +16,10 @@ CurrentUser = Annotated[User, Depends(get_current_user)]
 
 @router.post('/', status_code=201, response_model=UserPublic)
 def create_user(user: UserSchema, session: Session):
-    db_user = session.scalar(
-        select(User).where(User.username == user.username)
-    )
+    db_user = session.scalar(select(User).where(User.email == user.email))
 
     if db_user:
-        raise HTTPException(
-            status_code=400, detail='Username already registered'
-        )
+        raise HTTPException(status_code=400, detail='Email already registered')
 
     hashed_password = get_password_hash(user.password)
 

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fast_zero.models import Todo, User
 
 
-def test_create_user(session):
+def test_create_user_without_todos(session):
     new_user = User(username='alice', password='secret', email='teste@test')
     session.add(new_user)
     session.commit()

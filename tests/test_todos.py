@@ -1,6 +1,5 @@
-import factory.fuzzy
-
-from fast_zero.models import Todo, TodoState
+from fast_zero.models import TodoState
+from tests.factories import TodoFactory
 
 
 def test_createto_todo(client, token):
@@ -19,16 +18,6 @@ def test_createto_todo(client, token):
         'description': 'Test todo description',
         'state': 'draft',
     }
-
-
-class TodoFactory(factory.Factory):
-    class Meta:
-        model = Todo
-
-    title = factory.Faker('text')
-    description = factory.Faker('text')
-    state = factory.fuzzy.FuzzyChoice(TodoState)
-    user_id = 1
 
 
 def test_list_todos(session, client, user, token):
