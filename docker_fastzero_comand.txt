@@ -1,0 +1,14 @@
+docker build -t "fast_zero" .
+docker images
+docker run -d --name fastzeroapp -p 8000:8000 fast_zero:latest
+
+docker run -d --name app_database -e POSTGRES_USER=app_user -e POSTGRES_DB=app_db  -e POSTGRES_PASSWORD=app_password -v pgdata:/var/lib/postgresql/data -p 5432:5432 postgres
+
+docker exec -it fastzeroapp poetry run alembic upgrade head
+
+docker-compose up
+docker-compose down
+
+docker-compose up --build
+
+docker-compose run --entrypoint="poetry run task test" fastzero_app
